@@ -9,7 +9,7 @@ Input
 Output   
 　　
 一行，表示答案。
-
+ 
 #输入输出样例
 Sample Input  
 
@@ -18,7 +18,7 @@ Sample Input
 1 2 5 6 2
 
 Sample Output  
-
+ 
 4
 #说明
 Data Constraint 
@@ -93,7 +93,7 @@ int main()
 		if (que[head]<i - m)
 			++head;//将超出范围的队头删掉
 		f[i] = f[que[head]] + w[i];//转移（用队头）
-		while (head <= tail && f[que[tail]]>f[i])
+		while (head <= tail && w[que[tail]]>w[i])
 			--tail;//将不比它优的全部删掉
 		que[++tail] = i;//将它加进队尾
 	}
@@ -109,29 +109,76 @@ int main()
 个人比较喜欢Python的代码，简洁表达如下：
 
 ```python
-# #-*- coding: utf-8 -*-
-#案例1代码
-a=[0,1,5 ,6, 2, 1, 7]
-n=len(a)-1
-m=3 #窗口大小
-head=0
-tail=0
-left=1
-right=3
-dp=[0]*10
-queue=[0]*10
-ansl=[0]*10
-for i in range(left,n+1):
-    while (head<=tail and queue[head]< i-right):
-        head=head+1 
-    while (head<=tail and dp[i-left]>dp[queue[tail]]):
-        tail=tail-1
-    tail=tail+1
-    queue[tail]=i-left
-    dp[i] = dp[queue[head]] + a[i]
-print(min(dp[n-right+2:n])) #输出总体最大值
+# -*- coding: utf-8 -*-
+##code2
+##用来求滑动窗口最小值问题
+a = [0, 4, 2, 5, 6, 1, 7]
+n = len(a) - 1
+m = 3 #窗口大小
+head = 1
+tail = 0 #这里初始化为0是有必要的
+dp = [0] * 10
+queue = [0] * 10
+ansl = [0] * 10
+for i in range(1, n + 1) :
+while (head <= tail and queue[head] <= i - m) :
+head = head + 1 #head的递增是有条件的，即不能让下标的距离太大，m = 3, 超过肯定不行，前初始化tail = 0也是有道理的
+dp[i] = dp[queue[head]] + a[i]
+while (head <= tail and a[i]<a[queue[tail]]) : #发现比队尾还小的情况，那就果断出队
+	tail = tail - 1
+	tail = tail + 1
+	queue[tail] = i
+	ansl[i] = a[queue[head]]
+
+	for ii in range(m, n + 1) :
+		print ansl[ii]
+		print min(dp[n - m + 1:n]) #输出总体最小值
+
+
+## code2方法一
+## 用来求烽火传递问题
+		a = [0, 4, 2, 5, 6, 1, 7]
+		n = len(a) - 1
+		m = 3 #窗口大小
+		head = 0
+		tail = 0 #这里初始化为0是有必要的
+		dp = [0] * 10
+		queue = [0] * 10
+		ansl = [0] * 10
+		for i in range(1, n + 1) :
+			while (head <= tail and queue[head]< i - m) :
+				head = head + 1 #head的递增是有条件的，即不能让下标的距离太大，m = 3, 超过肯定不行，前初始化tail = 0也是有道理的
+				dp[i] = dp[queue[head]] + a[i]
+				while (head <= tail and dp[i]<dp[queue[tail]]) : #发现比队尾还小的情况，那就果断出队
+					tail = tail - 1
+					tail = tail + 1
+					queue[tail] = i
+					ansl[i] = a[queue[head]]
+					# dp[i] = dp[queue[head]] + a[i]
+					print(a[queue[head]])
+
+					for ii in range(m, n + 1) :
+						print(ansl[ii])
+						print(min(dp[n - m + 1:n])) #输出总体最小值
+
+## code2方法二
+						import queue
+						a = [1, 2, 5, 6, 3, 7]
+						queuearray = []
+						dp = [0] * 10
+						for i in range(len(a)) :
+							queuearray.append(a[i])
+							while a[i] < queuearray[max(len(queuearray) - 2, 0)] :
+								queuearray.remove(queuearray[len(queuearray) - 2])
+								if i>2 :
+									dp[i] = temp + a[i]
+									if  len(queuearray) > 3:
+queuearray.remove(queuearray[0])
+temp = queuearray[0]
+print(queuearray)
+print(dp)
+#这里我用的是一个list来做的，比方法一中的que以及索引要简单且好理解，中间也打印出了queuearray方便观察整个过程
 ```
 
 ## 参考
 >单调队列https://wenku.baidu.com/view/5ab2c214767f5acfa1c7cdfa.html
->我博客上的https://blog.csdn.net/hguo11/article/details/80350124 有几种解法
