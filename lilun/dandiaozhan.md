@@ -25,3 +25,25 @@
 
 
 
+#用途
+利用单调栈，可以找到从左/右遍历第一个比它小/大的元素的位置。对应的代码如下：
+
+```c++
+	scanf("%lld", &n);
+	for (int i = 1; i <= n; i++) scanf("%lld", &val[i]), qzh[i] = qzh[i - 1] + val[i];
+	for (int i = 1; i <= n; i++){
+		while (top&&val[i]<val[stk[top]]) 
+			l[stk[top]] = i, 
+			top--;
+		stk[++top] = i;
+	}
+```
+
+其中stk就是栈，l保存的是右边第一个比当先值小的位置。输入
+
+6
+
+3 1 6 4 5 2
+
+得到的l为[0 2 0 4 6 6 0]（注意下标从1开始），stk为[0 2 6 5 0 0 0]
+
